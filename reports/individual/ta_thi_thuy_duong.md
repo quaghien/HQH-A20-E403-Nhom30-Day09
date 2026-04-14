@@ -1,8 +1,8 @@
 # Báo Cáo Cá Nhân — Lab Day 09: Multi-Agent Orchestration
 
 **Họ và tên:** Tạ Thị Thùy Dương
-**Vai trò trong nhóm:** Worker Owner (Member B — Retrieval)
-**Ngày nộp:** 2026-04-14
+**Vai trò trong nhóm:** Worker Owner (Retrieval)
+**Ngày nộp:** 2026-04-14 (Day 09)
 
 ---
 
@@ -19,7 +19,7 @@ Tôi phụ trách toàn bộ `workers/retrieval.py` — worker chịu trách nhi
   - `run(state)` — worker entry point, ghi `retrieved_chunks`, `retrieved_sources`, `worker_io_logs` vào AgentState
 
 **Cách công việc của tôi kết nối với thành viên khác:**
-Output `retrieved_chunks` là đầu vào bắt buộc của synthesis_worker (Member D) và được policy_tool_worker (Member C) dùng khi không có chunks sẵn. `mcp_server.py` (Member C) cũng gọi trực tiếp `retrieve_dense()` trong tool `search_kb`. Sau khi xong, tôi cập nhật `contracts/worker_contracts.yaml` field `actual_implementation.status = "done"` để team biết retrieval sẵn sàng tích hợp.
+Output `retrieved_chunks` là đầu vào bắt buộc của synthesis_worker (An) và được policy_tool_worker (Hậu) dùng khi không có chunks sẵn. `mcp_server.py` (Hậu) cũng gọi trực tiếp `retrieve_dense()` trong tool `search_kb`. Sau khi xong, tôi cập nhật `contracts/worker_contracts.yaml` field `actual_implementation.status = "done"` để team biết retrieval sẵn sàng tích hợp.
 
 **Bằng chứng:** Xem `workers/retrieval.py` — constants `TOP_K_SEARCH=10`, `TOP_K_SELECT=3`, `ABSTAIN_THRESHOLD=0.3`; `_get_collection()` dùng `os.getenv()`; `retrieve_dense()` two-stage filter.
 
@@ -38,7 +38,7 @@ Output `retrieved_chunks` là đầu vào bắt buộc của synthesis_worker (M
 - Không có threshold — synthesis nhận chunk với score ~0.1 không liên quan, tăng nguy cơ hallucination
 
 **Lý do tôi chọn cách này:**
-Spec `member_b_retrieval_owner.md` quy định rõ `top_k_search: 10`, `top_k_select: 3`, `dense abstain threshold: 0.3`. Two-stage cho phép recall rộng ở stage 1 và precision cao ở stage 2. Threshold 0.3 đủ để loại bỏ noise nhưng không quá chặt gây abstain nhầm khi evidence thực sự tồn tại trong docs.
+Two-stage cho phép recall rộng ở stage 1 và precision cao ở stage 2. Threshold 0.3 đủ để loại bỏ noise nhưng không quá chặt gây abstain nhầm khi evidence thực sự tồn tại trong docs.
 
 **Trade-off đã chấp nhận:**
 Với lexical scoring, threshold 0.3 vẫn để lọt một số chunk không liên quan (ví dụ `hr_leave_policy.txt` score 0.368 xuất hiện trong SLA query). Đây là giới hạn của whole-document indexing, không phải của two-stage design.
@@ -112,16 +112,16 @@ Done. Total docs: 5
 ## 4. Tôi tự đánh giá đóng góp của mình
 
 **Tôi làm tốt nhất ở điểm nào?**
-Thiết kế two-stage retrieval khớp chính xác với spec, không thêm không bớt. Phát hiện và sửa bug README index script — đây là lỗi blocking cả team vì không ai có chunks để test end-to-end. Cập nhật contract kịp thời để C và D biết retrieval sẵn sàng.
+Thiết kế two-stage retrieval khớp chính xác với spec. Phát hiện và sửa bug README index script — đây là lỗi blocking cả team vì không ai có chunks để test end-to-end. Cập nhật contract kịp thời để Hậu và An biết retrieval sẵn sàng.
 
 **Tôi làm chưa tốt hoặc còn yếu ở điểm nào?**
 Indexing whole-document (mỗi file = 1 chunk) làm score không phản ánh đúng relevance của đoạn cụ thể. `hr_leave_policy.txt` lọt top 3 cho SLA query vì keyword overlap tình cờ ở cấp độ toàn văn bản. Paragraph-level chunking sẽ sạch hơn nhiều.
 
 **Nhóm phụ thuộc vào tôi ở đâu?**
-Member D (synthesis) bị block hoàn toàn nếu `retrieved_chunks` rỗng hoặc thiếu field `source`. Member C (MCP) gọi trực tiếp `retrieve_dense()` — nếu signature sai là crash `tool_search_kb`.
+An (synthesis) bị block hoàn toàn nếu `retrieved_chunks` rỗng hoặc thiếu field `source`. Hậu (MCP) gọi trực tiếp `retrieve_dense()` — nếu signature sai là crash `tool_search_kb`.
 
 **Phần tôi phụ thuộc vào thành viên khác:**
-Cần Member A đảm bảo `retrieval_worker_node` trong `graph.py` gọi `retrieval_run(state)` thật sự thay vì placeholder hardcode. Nếu A chưa wire, toàn bộ retrieval logic của tôi không được chạy trong graph.
+Cần Hiền đảm bảo `retrieval_worker_node` trong `graph.py` gọi `retrieval_run(state)` thật sự thay vì placeholder hardcode. Nếu A chưa wire, toàn bộ retrieval logic của tôi không được chạy trong graph.
 
 ---
 
