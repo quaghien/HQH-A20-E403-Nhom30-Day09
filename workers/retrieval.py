@@ -20,7 +20,7 @@ Output (vào AgentState):
 
 Gọi độc lập để test:
     python workers/retrieval.py
-"""https://github.com/tttduong/A20-E403-Nhom30-Day09/pull/12/conflict?name=workers%252Fretrieval.py&ancestor_oid=945ae8e04aa61f44d6d181e1325c43100e0a96fa&base_oid=fa979e8632f507351769fe89d1d18b0133fd8e46&head_oid=2db70c731b641a8f313f893fb38bb72f753802ad
+"""
 
 import os
 import re
