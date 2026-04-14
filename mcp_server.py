@@ -361,7 +361,7 @@ if __name__ == "__main__":
             if _idx + 1 < len(_args):
                 _port = int(_args[_idx + 1])
         import uvicorn
-        print(f"\n🚀 Khởi động MCP HTTP Server trên port {_port}...")
+        print(f"\n Khởi động MCP HTTP Server trên port {_port}...")
         print(f"   GET  http://localhost:{_port}/tools/list")
         print(f"   POST http://localhost:{_port}/tools/call")
         print(f"   GET  http://localhost:{_port}/health")
@@ -389,14 +389,14 @@ if __name__ == "__main__":
         print(f"  Result: {result}")
 
     # 3. Test get_ticket_info
-    print("\n🎫 Test: get_ticket_info")
+    print("\n Test: get_ticket_info")
     ticket = dispatch_tool("get_ticket_info", {"ticket_id": "P1-LATEST"})
     print(f"  Ticket: {ticket.get('ticket_id')} | {ticket.get('priority')} | {ticket.get('status')}")
     if ticket.get("notifications_sent"):
         print(f"  Notifications: {ticket['notifications_sent']}")
 
     # 4. Test check_access_permission
-    print("\n🔐 Test: check_access_permission (Level 3, emergency)")
+    print("\n Test: check_access_permission (Level 3, emergency)")
     perm = dispatch_tool("check_access_permission", {
         "access_level": 3,
         "requester_role": "contractor",
@@ -408,12 +408,12 @@ if __name__ == "__main__":
     print(f"  notes: {perm.get('notes')}")
 
     # 5. Test invalid tool — dispatch_tool phải trả error dict, KHÔNG được crash
-    print("\n🛡️  Test: invalid tool (graceful error handling)")
+    print("\n Test: invalid tool (graceful error handling)")
     err = dispatch_tool("nonexistent_tool", {})
     assert "error" in err, "dispatch_tool phải trả về error dict khi tool không tồn tại"
-    print(f"  ✅ dispatch_tool trả error dict (không crash): {err.get('error')}")
+    print(f"  dispatch_tool trả error dict (không crash): {err.get('error')}")
 
-    print("\n✅ MCP server test done.")
+    print("\n MCP server test done.")
     print("\n" + "=" * 60)
     print("HTTP Server (Bonus +2)")
     print("=" * 60)
@@ -448,7 +448,7 @@ def create_app():
         from fastapi.responses import RedirectResponse
         from pydantic import BaseModel
     except ImportError:
-        print("❌ FastAPI chưa cài. Chạy: pip install fastapi uvicorn")
+        print(" FastAPI chưa cài. Chạy: pip install fastapi uvicorn")
         return None
 
     app = FastAPI(
